@@ -376,36 +376,19 @@ class Router
     private function invoke($fn, $params = [])
     {
         if (is_callable($fn)) {
-            call_user_func_array($fn, $params);
+            $return = call_user_func_array($fn, $params);
+
+            if( is_array($return) || is_object($return) ) {
+                header('Content-type: application/json');
+                echo json_encode($return);
+            } else {
+                echo $return;
+            }
         }
 
         // If not, check the existence of special parameters
-        elseif (stripos($fn, '@') !== false) {
-
-
-            // Explode segments of given route
-            list($controller, $method) = explode('@', $fn);
-            // Adjust controller class if namespace has been set
-            if ($this->getNamespace() !== '') {
-                $controller = $this->getNamespace() . '\\' . $controller;
-            }
-            // if (class_exists($controller)) {
-            // } else {
-            if (file_exists(__DIR__ . '/../Controller/' . $controller . '.php')) {
-                include_once __DIR__ . '/../Controller/' . $controller . '.php';
-            }
-            // }
-
-            // Check if class exists, if not just ignore and check if the class exists on the default namespace
-            if (class_exists($controller)) {
-
-                // First check if is a static method, directly trying to invoke it.
-                // If isn't a valid static method, we will try as a normal method invocation.
-                if (call_user_func_array([new $controller(), $method], $params) === false) {
-                    // Try to call the method as an non-static method. (the if does nothing, only avoids the notice)
-                    if (forward_static_call_array([$controller, $method], $params) === false);
-                }
-            }
+        else {
+           error(404);
         }
     }
 

@@ -56,7 +56,7 @@
     </style>
     <div class="code-area">
         <span style="color: #777;font-style:italic;">
-            // <?= $response_code . ' ' . $response_message; ?>.
+            # <?= $response_code . ' ' . $response_message; ?>.
         </span>
         <span>
             <span style="color:#d65562;">
